@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px 12px;
+            text-align: left;
+        }
+        button {
+            padding: 5px 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .form-container {
+            margin-bottom: 20px;
+        }
+        .form-container input,
+        .form-container button {
+            padding: 8px 12px;
+            margin-right: 10px;
+        }
+        .form-container input[type="text"] {
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Admin Dashboard</h1>
+
+<!-- Form to create a new license -->
+<div class="form-container">
+    <h2>Create New License</h2>
+    <form action="/admin/create" method="POST">
+        <input type="text" name="name" placeholder="License Name" required>
+        <input type="number" name="usageLimit" placeholder="Usage Limit" required>
+        <button type="submit">Generate License</button>
+    </form>
+</div>
+
+<!-- List of existing licenses -->
+<h2>Existing Licenses</h2>
+<table>
+    <thead>
+    <tr>
+        <th>License Key</th>
+        <th>Name</th>
+        <th>Usage Limit</th>
+        <th>Used Count</th>
+        <th>Revoked</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% if (licenses && Object.keys(licenses).length > 0) { %>
+        <% Object.keys(licenses).forEach(key => { %>
+            <tr>
+                <td><%= key %></td>
+                <td><%= licenses[key].name %></td>
+                <td><%= licenses[key].usageLimit %></td>
+                <td><%= licenses[key].usedCount %></td>
+                <td><%= licenses[key].revoked ? 'Yes' : 'No' %></td>
+                <td>
+                    <% if (!licenses[key].revoked) { %>
+                        <form action="/admin/revoke/<%= key %>" method="POST" style="display:inline;">
+                            <button type="submit">Revoke</button>
+                        </form>
+                    <% } else { %>
+                        <button disabled>Revoked</button>
+                    <% } %>
+                </td>
+            </tr>
+        <% }) %>
+    <% } else { %>
+        <tr>
+            <td colspan="6">No licenses available.</td>
+        </tr>
+    <% } %>
+    </tbody>
+</table>
+
+</body>
+</html>
